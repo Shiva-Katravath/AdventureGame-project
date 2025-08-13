@@ -14,8 +14,8 @@ let inventory = [];
 
 // Weapon damage (starts at 0 until player buys a sword)
 let weaponDamage=0;
-console.log("Starting wepon damage :"+weaponDamage);
-console.log("When you buy a sword , wepon damage will incerse to 10");
+console.log("Starting weapon damage :"+weaponDamage);
+console.log("When you buy a sword , weapon damage will increse to 10");
 
 // Monster defense (affects combat outcomes)
 let monsterDefense = 5;
@@ -23,8 +23,8 @@ console.log("Monster defence: "+monsterDefense);
 console.log("Monster can withstand some damage in comat!");
 
 // Healing potion restoration (matches final implementation)
-let helingpointValue=30;
-console.log("Heling point will be: "+helingpointValue);
+let helingPointValue=30;
+console.log("Heling point will be: "+helingPointValue);
 console.log("Apotion will restore 30 health!");
 
 console.log("=====================================");
@@ -38,7 +38,7 @@ console.log("welcome to the game, " + playerName + "!");
 console.log("you start with" + playerGold + "gold.");
 
 //location tracking
-let currentlocation="Village";
+let currentlocation="village";
 let firstVisit=true;
 
 
@@ -51,14 +51,14 @@ if(currentlocation=="village"){
     console.log("2: go to market");
     console.log("3: enter forest");
     console.log("4: go to check status");
-    console.log("6: go to Quit game");
+    console.log("5: go to Quit game");
 
     if(firstVisit){
-        console.log("|n Villager : Welcome the Adventure game player there is the dragon in the mountain");
+        console.log("\n Villager : Welcome the Adventure game player there is the dragon in the mountain");
         firstVisit=false;
     }
 }
-else if(currentlocation === "blacksmit"){
+else if(currentlocation === "blacksmith"){
     console.log("\n===Blacksmit===");
     console.log("The heat from the forest fills the the air. Wepons and armor line the walls.");
     console.log("\n Where would you like to go?");
@@ -85,7 +85,7 @@ if(currentlocation ==="village"){
     }
     else if(choiceNum === 4){
         console.log("\n==="+playerName+"'s atatus ===");
-        console.log("❤️ Helth :"+playerHealth);
+        console.log("❤️ Health :"+playerHealth);
         console.log("💰 gold"+playerGold);
         console.log("📍 Location: "+currentlocation);
     }
