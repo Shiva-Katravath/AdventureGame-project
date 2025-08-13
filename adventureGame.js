@@ -13,19 +13,19 @@ let playerGold = 20;//starting gold
 let inventory = [];
 
 // Weapon damage (starts at 0 until player buys a sword)
-let weponDamage=0;
-console.log("Starting wepon damage :"+weponDamage);
+let weaponDamage=0;
+console.log("Starting wepon damage :"+weaponDamage);
 console.log("When you buy a sword , wepon damage will incerse to 10");
 
 // Monster defense (affects combat outcomes)
-let monsterDefence = 5;
-console.log("Monster defence: "+monsterDefence);
+let monsterDefense = 5;
+console.log("Monster defence: "+monsterDefense);
 console.log("Monster can withstand some damage in comat!");
 
 // Healing potion restoration (matches final implementation)
 let helingpointValue=30;
 console.log("Heling point will be: "+helingpointValue);
-console.log("Apotion will restore 30 helth!");
+console.log("Apotion will restore 30 health!");
 
 console.log("=====================================");
 console.log("           The Dragon's Quest.       ");
@@ -54,8 +54,8 @@ if(currentlocation=="village"){
     console.log("6: go to Quit game");
 
     if(firstVisit){
-        console.log("|n Villeger : Welcome the Adventure game player there is the dragon in the mountain");
-        firstVisit=fals;
+        console.log("|n Villager : Welcome the Adventure game player there is the dragon in the mountain");
+        firstVisit=false;
     }
 }
 else if(currentlocation === "blacksmit"){
@@ -100,11 +100,11 @@ else{
 
 else if(currentlocation =="blacksmith"){
     if(choiceNum===1){
-        currentlocation=="village";
+        currentlocation="village";
         console.log("\n You return to village");
     }
     else if(choiceNum === 2){
-        console.log("\n==="+playerName+"'s atatus ===");
+        console.log("\n==="+playerName+"'s status ===");
         console.log("❤️ Helth :"+playerHealth);
         console.log("💰 gold"+playerGold);
         console.log("📍 Location: "+currentlocation);
