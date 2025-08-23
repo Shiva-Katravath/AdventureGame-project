@@ -227,6 +227,3 @@ while (gameRunning) {
        gameRunning = false;
    }
 }
-// =========================================
-// END Lab: Game Input Validation
-// =========================================
