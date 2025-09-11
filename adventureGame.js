@@ -38,7 +38,7 @@ console.log("\nWelcome, " + playerName + "!");
 console.log("You start with " + playerGold + " gold.");
 
 // =========================================
-// START Lab: Game Commands Part 1
+// START Lab: Game Commands Part 2
 // =========================================
 // Game state variables
 let gameRunning = true;
@@ -49,166 +49,224 @@ let hasPotion = false;
 let hasArmor = false;
 
 /**
- * Shows the player's current stats
- * Displays health, gold, and location
- */
+* Shows the player's current stats
+*/
 function showStatus() {
-    console.log("\n=== " + playerName + "'s Status ===");
-    console.log("❤️  Health: " + playerHealth);
-    console.log("💰 Gold: " + playerGold);
-    console.log("📍 Location: " + currentLocation);
+   console.log("\n=== " + playerName + "'s Status ===");
+   console.log("❤️  Health: " + playerHealth);
+   console.log("💰 Gold: " + playerGold);
+   console.log("📍 Location: " + currentLocation);
 }
 
 /**
- * Shows the current location's description and available choices
- */
+* Shows the current location's description and available choices
+*/
 function showLocation() {
-    console.log("\n=== " + currentLocation.toUpperCase() + " ===");
-    
-    if (currentLocation === "village") {
-        console.log("You're in a bustling village. The blacksmith and market are nearby.");
-        console.log("\nWhat would you like to do?");
-        console.log("1: Go to blacksmith");
-        console.log("2: Go to market");
-        console.log("3: Enter forest");
-        console.log("4: Check status");
-        console.log("5: Check inventory");
-        console.log("6: Quit game");
-    } 
-    else if (currentLocation === "blacksmith") {
-        console.log("The heat from the forge fills the air. Weapons and armor line the walls.");
-        console.log("\nWhat would you like to do?");
-        console.log("1: Return to village");
-        console.log("2: Check status");
-        console.log("3: Check inventory");
-        console.log("4: Quit game");
-    }
-    else if (currentLocation === "market") {
-        console.log("Merchants sell their wares from colorful stalls. A potion seller catches your eye.");
-        console.log("\nWhat would you like to do?");
-        console.log("1: Return to village");
-        console.log("2: Check status");
-        console.log("3: Check inventory");
-        console.log("4: Quit game");
-    }
+   console.log("\n=== " + currentLocation.toUpperCase() + " ===");
+   
+   if (currentLocation === "village") {
+       console.log("You're in a bustling village. The blacksmith and market are nearby.");
+       console.log("\nWhat would you like to do?");
+       console.log("1: Go to blacksmith");
+       console.log("2: Go to market");
+       console.log("3: Enter forest");
+       console.log("4: Check status");
+       console.log("5: Check inventory");
+       console.log("6: Quit game");
+   } 
+   else if (currentLocation === "blacksmith") {
+       console.log("The heat from the forge fills the air. Weapons and armor line the walls.");
+       console.log("\nWhat would you like to do?");
+       console.log("1: Return to village");
+       console.log("2: Check status");
+       console.log("3: Check inventory");
+       console.log("4: Quit game");
+   }
+   else if (currentLocation === "market") {
+       console.log("Merchants sell their wares from colorful stalls. A potion seller catches your eye.");
+       console.log("\nWhat would you like to do?");
+       console.log("1: Return to village");
+       console.log("2: Check status");
+       console.log("3: Check inventory");
+       console.log("4: Quit game");
+   }
 }
 
 /**
- * Handles movement between locations
- * @param {number} choiceNum The chosen option number
- * @returns {boolean} True if movement was successful
- */
+* Handles movement between locations
+* @param {number} choiceNum The chosen option number
+* @returns {boolean} True if movement was successful
+*/
 function move(choiceNum) {
-    let validMove = false;
-    
-    if (currentLocation === "village") {
-        if (choiceNum === 1) {
-            currentLocation = "blacksmith";
-            console.log("\nYou enter the blacksmith's shop.");
-            validMove = true;
-        }
-        else if (choiceNum === 2) {
-            currentLocation = "market";
-            console.log("\nYou enter the market.");
-            validMove = true;
-        }
-        else if (choiceNum === 3) {
-            currentLocation = "forest";
-            console.log("\nYou venture into the forest...");
-            validMove = true;
-        }
-    }
-    else if (currentLocation === "blacksmith" || currentLocation === "market") {
-        if (choiceNum === 1) {
-            currentLocation = "village";
-            console.log("\nYou return to the village center.");
-            validMove = true;
-        }
-    }
-    
-    return validMove;
+   let validMove = false;
+   
+   if (currentLocation === "village") {
+       if (choiceNum === 1) {
+           currentLocation = "blacksmith";
+           console.log("\nYou enter the blacksmith's shop.");
+           validMove = true;
+       }
+       else if (choiceNum === 2) {
+           currentLocation = "market";
+           console.log("\nYou enter the market.");
+           validMove = true;
+       }
+       else if (choiceNum === 3) {
+           currentLocation = "forest";
+           console.log("\nYou venture into the forest...");
+           validMove = true;
+       }
+   }
+   else if (currentLocation === "blacksmith" || currentLocation === "market") {
+       if (choiceNum === 1) {
+           currentLocation = "village";
+           console.log("\nYou return to the village center.");
+           validMove = true;
+       }
+   }
+   
+   return validMove;
+}
+
+/**
+* Handles combat encounters
+* @returns {boolean} True if combat was successful, false if retreat
+*/
+function handleCombat() {
+   if (hasWeapon) {
+       console.log("You have a sword! You attack!");
+       console.log("Victory! You found 10 gold!");
+       playerGold += 10;
+       return true;
+   } else {
+       console.log("Without a weapon, you must retreat!");
+       updateHealth(-20);
+       return false;
+   }
+}
+
+/**
+* Updates player health within valid range
+* @param {number} amount Amount to change health by
+* @returns {number} The new health value
+*/
+function updateHealth(amount) {
+   playerHealth += amount;
+   
+   if (playerHealth > 100) {
+       playerHealth = 100;
+       console.log("You're at full health!");
+   }
+   if (playerHealth < 0) {
+       playerHealth = 0;
+       console.log("You're gravely wounded!");
+   }
+   
+   console.log("Health is now: " + playerHealth);
+   return playerHealth;
+}
+
+/**
+* Checks and displays inventory
+*/
+function checkInventory() {
+   console.log("\n=== INVENTORY ===");
+   if (!hasWeapon && !hasPotion && !hasArmor) {
+       console.log("Your inventory is empty!");
+       return;
+   }
+   
+   if (hasWeapon) console.log("- Sword");
+   if (hasPotion) console.log("- Health Potion");
+   if (hasArmor) console.log("- Shield");
 }
 
 // Main game loop
 while (gameRunning) {
-    // Show current state
-    showLocation();
-    showStatus();
-    
-    // Get and validate player choice
-    let validChoice = false;
-    while (!validChoice) {
-        try {
-            let choice = readline.question("\nEnter choice (number): ");
-            
-            // Check for empty input
-            if (choice.trim() === "") {
-                throw "Please enter a number!";
-            }
-            
-            // Convert to number and check if it's a valid number
-            let choiceNum = parseInt(choice);
-            if (isNaN(choiceNum)) {
-                throw "That's not a number! Please enter a number.";
-            }
-            
-            // Handle choices based on location
-            if (currentLocation === "village") {
-                if (choiceNum < 1 || choiceNum > 6) {
-                    throw "Please enter a number between 1 and 6.";
-                }
-                
-                validChoice = true;
-                
-                if (choiceNum <= 3) {
-                    if (!move(choiceNum)) {
-                        console.log("\nYou can't go there!");
-                    }
-                }
-                else if (choiceNum === 4) {
-                    showStatus();
-                }
-                else if (choiceNum === 5) {
-                    checkInventory();
-                }
-                else if (choiceNum === 6) {
-                    gameRunning = false;
-                    console.log("\nThanks for playing!");
-                }
-            }
-            else if (currentLocation === "blacksmith" || currentLocation === "market") {
-                if (choiceNum < 1 || choiceNum > 4) {
-                    throw "Please enter a number between 1 and 4.";
-                }
-                
-                validChoice = true;
-                
-                if (choiceNum === 1) {
-                    if (!move(choiceNum)) {
-                        console.log("\nYou can't go there!");
-                    }
-                }
-                else if (choiceNum === 2) {
-                    showStatus();
-                }
-                else if (choiceNum === 3) {
-                    checkInventory();
-                }
-                else if (choiceNum === 4) {
-                    gameRunning = false;
-                    console.log("\nThanks for playing!");
-                }
-            }
-            
-        } catch (error) {
-            console.log("\nError: " + error);
-            console.log("Please try again!");
-        }
-    }
+   // Show current state
+   showLocation();
+   
+   // Get and validate player choice
+   let validChoice = false;
+   while (!validChoice) {
+       try {
+           let choice = readline.question("\nEnter choice (number): ");
+           
+           // Check for empty input
+           if (choice.trim() === "") {
+               throw "Please enter a number!";
+           }
+           
+           // Convert to number and check if it's a valid number
+           let choiceNum = parseInt(choice);
+           if (isNaN(choiceNum)) {
+               throw "That's not a number! Please enter a number.";
+           }
+           
+           // Handle choices based on location
+           if (currentLocation === "village") {
+               if (choiceNum < 1 || choiceNum > 6) {
+                   throw "Please enter a number between 1 and 6.";
+               }
+               
+               validChoice = true;
+               
+               if (choiceNum <= 3) {
+                   if (!move(choiceNum)) {
+                       console.log("\nYou can't go there!");
+                   }
+                   else if (choiceNum === 3) {
+                       console.log("\nA monster appears!");
+                       if (!handleCombat()) {
+                           currentLocation = "village";
+                       }
+                   }
+               }
+               else if (choiceNum === 4) {
+                   showStatus();
+               }
+               else if (choiceNum === 5) {
+                   checkInventory();
+               }
+               else if (choiceNum === 6) {
+                   gameRunning = false;
+                   console.log("\nThanks for playing!");
+               }
+           }
+           else if (currentLocation === "blacksmith" || currentLocation === "market") {
+               if (choiceNum < 1 || choiceNum > 4) {
+                   throw "Please enter a number between 1 and 4.";
+               }
+               
+               validChoice = true;
+               
+               if (choiceNum === 1) {
+                   move(choiceNum);
+               }
+               else if (choiceNum === 2) {
+                   showStatus();
+               }
+               else if (choiceNum === 3) {
+                   checkInventory();
+               }
+               else if (choiceNum === 4) {
+                   gameRunning = false;
+                   console.log("\nThanks for playing!");
+               }
+           }
+           
+       } catch (error) {
+           console.log("\nError: " + error);
+           console.log("Please try again!");
+       }
+   }
 
-    // Check if player died
-    if (playerHealth <= 0) {
-        console.log("\nGame Over! Your health reached 0!");
-        gameRunning = false;
-    }
+   // Check if player died
+   if (playerHealth <= 0) {
+       console.log("\nGame Over! Your health reached 0!");
+       gameRunning = false;
+   }
 }
+// =========================================
+// END Lab: Game Commands Part 2
+// =========================================
