@@ -12,9 +12,7 @@ let playerHealth = 100;
 let playerGold = 20;
 let currentLocation = "village";
 
-const healingPotionValue = 30; // how much HP a potion restores (for display)
-
-/* Base templates (kept from your earlier code) */
+/* Base templates */
 const healthPotion = {
     name: "Health Potion",
     type: "potion",
@@ -31,12 +29,11 @@ const sword = {
     description: "A sturdy blade for combat"
 };
 
-
 const woodenShield = {
     name: "Wooden Shield",
     type: "armor",
     value: 8,
-    effect: 5, // protection amount
+    effect: 5,
     description: "Reduces damage taken in combat"
 };
 
@@ -69,17 +66,11 @@ function getBestItem(type) {
     return items.reduce((best, current) => (current.effect > best.effect ? current : best));
 }
 
-/**
- * Player is considered ready for the dragon if:
- * - They have the Steel Sword (the advanced weapon)
- * - They have any armor (wooden or iron)
- */
 function hasGoodEquipment() {
     const bestWeapon = getBestItem("weapon");
     const bestArmor = getBestItem("armor");
     return (bestWeapon && bestWeapon.name === "Steel Sword") && (bestArmor !== null);
 }
-
 
 function showStatus() {
     console.log("\n=== " + playerName + "'s Status ===");
@@ -173,7 +164,7 @@ function useItem() {
     if (item.type === "potion") {
         console.log(`\nYou drink the ${item.name}.`);
         playerHealth = updateHealth(item.effect);
-        inventory.splice(idx, 1); // remove used potion
+        inventory.splice(idx, 1);
         console.log(`Health restored to: ${playerHealth}`);
         return true;
     } else if (item.type === "weapon") {
@@ -185,17 +176,6 @@ function useItem() {
     }
 
     return false;
-}
-
-function checkInventory() {
-    console.log("\n=== INVENTORY ===");
-    if (inventory.length === 0) {
-        console.log("Your inventory is empty!");
-        return;
-    }
-    inventory.forEach((it, i) => {
-        console.log(`${i + 1}. ${it.name} - ${it.description}`);
-    });
 }
 
 function buyFromBlacksmith() {
@@ -217,7 +197,7 @@ function buyFromBlacksmith() {
     const selected = shopItems[idx];
     if (playerGold >= selected.value) {
         playerGold -= selected.value;
-        inventory.push({...selected}); // push copy
+        inventory.push({ ...selected });
         console.log(`You bought a ${selected.name} for ${selected.value} gold.`);
         console.log(`Gold remaining: ${playerGold}`);
     } else {
@@ -238,7 +218,7 @@ function buyFromMarket() {
     const cost = q * healthPotion.value;
     if (playerGold >= cost) {
         playerGold -= cost;
-        for (let i = 0; i < q; i++) inventory.push({...healthPotion});
+        for (let i = 0; i < q; i++) inventory.push({ ...healthPotion });
         console.log(`You bought ${q} potion(s) for ${cost} gold. Gold remaining: ${playerGold}`);
     } else {
         console.log("You don't have enough gold.");
@@ -256,15 +236,15 @@ function updateHealth(amount) {
     return playerHealth;
 }
 
-
+// ---------------------------
+// Combat System
+// ---------------------------
 function handleCombat(isDragon = false) {
-    // Monster stats
     const monsterDamage = isDragon ? 20 : 10;
     let monsterHealth = isDragon ? 50 : 20;
 
-    // Equipment selection
-    const bestWeapon = getBestItem("weapon"); // may be null
-    const bestArmor = getBestItem("armor"); // may be null
+    const bestWeapon = getBestItem("weapon");
+    const bestArmor = getBestItem("armor");
     const weaponName = bestWeapon ? bestWeapon.name : "No weapon";
     const weaponPower = bestWeapon ? bestWeapon.effect : 1;
     const armorName = bestArmor ? bestArmor.name : "No armor";
@@ -276,39 +256,33 @@ function handleCombat(isDragon = false) {
     console.log(`Using Weapon: ${weaponName} (Damage: ${weaponPower})`);
     console.log(`Using Armor: ${armorName} (Protection: ${armorProtection})`);
 
-    // If dragon, require good equipment
     if (isDragon && !hasGoodEquipment()) {
         console.log("\nYou are not properly equipped to face the dragon.");
         console.log("You need the Steel Sword and at least one piece of armor to challenge the dragon.");
-        return false; // cannot fight dragon
+        return false;
     }
 
-    // Fight loop: player decides whether to continue each round
     while (monsterHealth > 0 && playerHealth > 0) {
-        // Player attack
         console.log(`\nYou strike the enemy for ${weaponPower} damage.`);
         monsterHealth -= weaponPower;
         if (monsterHealth <= 0) {
             console.log("You have defeated the enemy!");
-            const goldFound = isDragon ? 100 : 10; // reward
+            const goldFound = isDragon ? 100 : 10;
             playerGold += goldFound;
             console.log(`You loot ${goldFound} gold. Total gold: ${playerGold}`);
 
-            // If dragon died -> victory
             if (isDragon) {
                 console.log("\n=== DRAGON SLAIN ===");
-                console.log("You have defeated the dragon and saved the land!");
                 showFinalVictory();
                 return true;
             }
-            return true; // regular monster defeated
+            return true;
         } else {
             console.log(`Enemy HP remaining: ${monsterHealth}`);
         }
 
-        // Enemy attack
         let damageReceived = monsterDamage - armorProtection;
-        if (damageReceived < 1) damageReceived = 1; // min damage
+        if (damageReceived < 1) damageReceived = 1;
         console.log(`The enemy attacks! Incoming damage: ${monsterDamage}. Armor reduces it by ${armorProtection}. You take ${damageReceived} damage.`);
         updateHealth(-damageReceived);
 
@@ -317,20 +291,20 @@ function handleCombat(isDragon = false) {
             return false;
         }
 
-        // Allow player to continue or flee
         let action = readline.question("Press Enter to continue fighting, or type 'flee' to run: ");
         if (action.trim().toLowerCase() === 'flee') {
             console.log("You flee from combat and return to the village.");
-            // small penalty for fleeing
             updateHealth(-5);
             return false;
         }
     }
-
     return false;
 }
 
-
+// ---------------------------
+// FIXED: Movement Function
+// ---------------------------
+function move(choiceNum) {
     let validMove = false;
 
     if (currentLocation === "village") {
@@ -346,14 +320,11 @@ function handleCombat(isDragon = false) {
             currentLocation = "forest";
             console.log("\nYou venture into the forest...");
             validMove = true;
-            // trigger combat with a regular monster
             console.log("\nA monster appears!");
             if (!handleCombat(false)) {
-                // if lost or fled, return to village
                 currentLocation = "village";
             }
         } else if (choiceNum === 4) {
-            // Attempt to go to mountain (dragon). We still let player travel, but fighting is controlled in mountain menu.
             currentLocation = "mountain";
             console.log("\nYou travel to the mountain path.");
             validMove = true;
@@ -387,6 +358,9 @@ function handleCombat(isDragon = false) {
     return validMove;
 }
 
+// ---------------------------
+// Helpers
+// ---------------------------
 function isValidChoice(input, max) {
     if (input === "") return false;
     const num = parseInt(input);
@@ -406,9 +380,6 @@ function showFinalVictory() {
     gameRunning = false;
 }
 
-// ---------------------------
-// Help system (unchanged)
-// ---------------------------
 function showHelp() {
     console.log("\n=== AVAILABLE COMMANDS ===");
     console.log("- Use the numbered options displayed at each location.");
@@ -432,15 +403,12 @@ console.log(`\nWelcome, ${playerName}! You start with ${playerGold} gold.`);
 while (gameRunning) {
     showLocation();
 
-    // determine max choice number depending on location
-    let maxChoice = 8; // default (village)
-    if (currentLocation === "village") maxChoice = 8;
-    else if (currentLocation === "blacksmith") maxChoice = 6;
+    let maxChoice = 8;
+    if (currentLocation === "blacksmith") maxChoice = 6;
     else if (currentLocation === "market") maxChoice = 6;
     else if (currentLocation === "forest") maxChoice = 5;
     else if (currentLocation === "mountain") maxChoice = 6;
 
-    // get valid input
     let input = readline.question("\nEnter choice (number): ");
     try {
         if (!isValidChoice(input, maxChoice)) {
@@ -448,14 +416,13 @@ while (gameRunning) {
         }
 
         const choiceNum = parseInt(input);
-        // route choices per location
 
         if (currentLocation === "village") {
             switch (choiceNum) {
-                case 1: move(1); break; // blacksmith
-                case 2: move(2); break; // market
-                case 3: move(3); break; // forest (fight triggers)
-                case 4: move(4); break; // mountain (travel)
+                case 1: move(1); break;
+                case 2: move(2); break;
+                case 3: move(3); break;
+                case 4: move(4); break;
                 case 5: showStatus(); break;
                 case 6: useItem(); break;
                 case 7: showHelp(); break;
@@ -464,7 +431,7 @@ while (gameRunning) {
         } else if (currentLocation === "blacksmith") {
             switch (choiceNum) {
                 case 1: buyFromBlacksmith(); break;
-                case 2: move(2); break; // return to village
+                case 2: move(2); break;
                 case 3: showStatus(); break;
                 case 4: useItem(); break;
                 case 5: showHelp(); break;
@@ -490,7 +457,6 @@ while (gameRunning) {
         } else if (currentLocation === "mountain") {
             switch (choiceNum) {
                 case 1:
-                    // Attempt dragon fight: check equipment in combat function
                     console.log("\nYou approach the dragon's lair...");
                     const dragonResult = handleCombat(true);
                     if (!dragonResult) {
@@ -498,7 +464,7 @@ while (gameRunning) {
                         currentLocation = "village";
                     }
                     break;
-                case 2: move(2); break; // return to village
+                case 2: move(2); break;
                 case 3: showStatus(); break;
                 case 4: useItem(); break;
                 case 5: showHelp(); break;
@@ -511,7 +477,6 @@ while (gameRunning) {
         console.log("Please try again.");
     }
 
-    // Check if player died
     if (playerHealth <= 0) {
         console.log("\nGame Over! Your health reached 0!");
         gameRunning = false;
